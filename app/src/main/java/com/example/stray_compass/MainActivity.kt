@@ -22,6 +22,9 @@ import androidx.compose.ui.unit.dp
 class MainActivity : ComponentActivity(), SensorEventListener {
     // MainActivityにSensorEventListenerなどを継承するのをやめたい！
     // MainActivityはComponentActivityのみを継承して、DIを行う程度にとどめておきたい！
+    //
+    // Sensor Serviceというクラスを作って、ViewModelにListenerを継承させるのはどうか？
+    // ListenerをServiceに渡す必要があるならthisで渡す。
 
     private lateinit var sensorManager: SensorManager
     private var accelerometer: Sensor? = null
