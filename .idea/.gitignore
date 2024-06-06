@@ -1,3 +1,7 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+/discord.xml
+/misc.xml
+/deploymentTargetSelector.xml
+/gradle.xml
