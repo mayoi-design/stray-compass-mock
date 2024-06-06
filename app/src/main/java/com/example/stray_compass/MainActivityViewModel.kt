@@ -73,12 +73,12 @@ class MainActivityViewModel(
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
 
-    fun resisterSensorListener() {
+    fun registerSensorListener() {
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI)
         sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI)
     }
 
-    fun unresisterSensorListener() {
+    fun unregisterSensorListener() {
         sensorManager.unregisterListener(this, accelerometer)
         sensorManager.unregisterListener(this, magnetometer)
     }

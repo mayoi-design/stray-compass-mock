@@ -29,12 +29,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        mainActivityViewModel.resisterSensorListener()
+        mainActivityViewModel.registerSensorListener()
     }
 
     override fun onPause() {
         super.onPause()
-        mainActivityViewModel.unresisterSensorListener()
+        mainActivityViewModel.unregisterSensorListener()
     }
  }
 
