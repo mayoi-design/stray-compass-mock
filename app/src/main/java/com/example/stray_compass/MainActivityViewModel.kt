@@ -6,15 +6,38 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
 
+// locationServiceのstatic filed leakをやめたい
 class MainActivityViewModel(
-    private val sensorManager: SensorManager
+    private val sensorManager: SensorManager,
 ): ViewModel(), SensorEventListener {
     // ViewModelにListener継承するの頭良くないか？
     // これをGPSでもやりたい
+
+    var currentLatitude by mutableDoubleStateOf(0.0)
+    var currentLongitude by mutableDoubleStateOf(0.0)
+
+    val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(p0: LocationResult) {
+            super.onLocationResult(p0)
+
+            val lastLocation = p0.lastLocation
+            if (lastLocation == null) {
+                currentLatitude = 0.0
+                currentLongitude = 0.0
+            }
+            else {
+                currentLatitude = lastLocation.latitude
+                currentLongitude = lastLocation.longitude
+            }
+        }
+    }
 
     private var accelerometer: Sensor? = null
     private var magnetometer: Sensor? = null
