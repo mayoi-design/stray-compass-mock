@@ -56,31 +56,7 @@ class LocationService: Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    override fun onBind(p0: Intent?): IBinder? {
-        TODO("Not yet implemented")
-    }
-
-    // これでやろうと思ったけど、IntentでActivityにlat, lng流して
-    // ActivityからViewModel通してUIに通知するのが良いかも
-    fun registerLocationUpdateCallback(listener: LocationListener) {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // 権限は上層でリクエストする
-            return
-        }
-
-        locationProviderClient.requestLocationUpdates(
-            locationRequest,
-            listener,
-            Looper.getMainLooper()
-        )
-    }
+    override fun onBind(p0: Intent?): IBinder? = null
 
     override fun onDestroy() {
         locationProviderClient.removeLocationUpdates(locationListener)
