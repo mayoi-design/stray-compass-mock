@@ -82,7 +82,8 @@ class LocationService: Service() {
         )
     }
 
-    fun stopLocationUpdates(listener: LocationListener) {
-        locationProviderClient.removeLocationUpdates(listener)
+    override fun onDestroy() {
+        locationProviderClient.removeLocationUpdates(locationListener)
+        super.onDestroy()
     }
 }
