@@ -11,13 +11,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-// locationServiceのstatic filed leakをやめたい
 class MainActivityViewModel(
     private val sensorManager: SensorManager,
 ): ViewModel(), SensorEventListener {
-    // ViewModelにListener継承するの頭良くないか？
-    // これをGPSでもやりたい
-
     var currentLatitude by mutableDoubleStateOf(0.0)
     var currentLongitude by mutableDoubleStateOf(0.0)
 
