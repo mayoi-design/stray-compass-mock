@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import com.example.stray_compass.resource.locationIntentAction
@@ -153,7 +154,10 @@ fun PermissionRequestView(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text("Please allow the App to access your location")
+        Text(
+            text = "Please allow the App to access your location",
+            textAlign = TextAlign.Center
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = {
             permissionRequest.launch(
