@@ -2,10 +2,14 @@ package com.example.stray_compass
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.hardware.SensorManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -31,9 +35,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import com.example.stray_compass.resource.locationIntentAction
+import com.example.stray_compass.resource.locationIntentLatitude
+import com.example.stray_compass.resource.locationIntentLongitude
 
 class MainActivity : ComponentActivity() {
     private lateinit var mainActivityViewModel: MainActivityViewModel
+
+    private lateinit var intentFilter: IntentFilter
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(ctx: Context?, intent: Intent?) {
+            val bundle = intent?.extras ?: return
+
+            val currentLatitude = bundle.getDouble(locationIntentLatitude, -1.0)
+            val currentLongitude = bundle.getDouble(locationIntentLongitude, -1.0)
+
+            mainActivityViewModel.setCurrentLocation(currentLatitude, currentLongitude)
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +64,29 @@ class MainActivity : ComponentActivity() {
             LocationService::class.java
         )
         val ctx: Context = this
+        intentFilter = IntentFilter()
         setContent {
             MaterialTheme {
                 LaunchedEffect(Unit) {
                     if (ActivityCompat.checkSelfPermission(ctx, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                         && ActivityCompat.checkSelfPermission(ctx, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                        intentFilter.addAction(locationIntentAction)
+                        @SuppressLint("UnspecifiedRegisterReceiverFlag")
+                        if (Build.VERSION.SDK_INT < 33) {
+                            registerReceiver(
+                                broadcastReceiver,
+                                intentFilter
+                            )
+                        }
+                        else {
+                            registerReceiver(
+                                broadcastReceiver,
+                                intentFilter,
+                                RECEIVER_NOT_EXPORTED
+                            )
+                        }
+
                         startService(locationServiceIntent)
                     }
                 }
@@ -67,6 +105,23 @@ class MainActivity : ComponentActivity() {
                         -> {
                             permitted = true
                             startService(locationServiceIntent)
+
+                            intentFilter.addAction(locationIntentAction)
+
+                            @SuppressLint("UnspecifiedRegisterReceiverFlag")
+                            if (Build.VERSION.SDK_INT < 33) {
+                                registerReceiver(
+                                    broadcastReceiver,
+                                    intentFilter
+                                )
+                            }
+                            else {
+                                registerReceiver(
+                                    broadcastReceiver,
+                                    intentFilter,
+                                    RECEIVER_NOT_EXPORTED
+                                )
+                            }
                         }
                     }
                 }
@@ -128,16 +183,24 @@ fun PermissionRequestView(
 fun Viewer(
     viewModel: MainActivityViewModel
 ) {
-    Viewer(azimuth = viewModel.azimuthInDegrees)
+    Viewer(
+        azimuth = viewModel.azimuthInDegrees,
+        latitude = viewModel.currentLatitude,
+        longitude = viewModel.currentLongitude,
+    )
 }
 
 @Composable
 fun Viewer(
     azimuth: Int,
+    latitude: Double,
+    longitude: Double,
 ) {
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
         Text("azimuth: $azimuth")
+        Text("latitude: $latitude")
+        Text("longitude: $longitude")
     }
 }
