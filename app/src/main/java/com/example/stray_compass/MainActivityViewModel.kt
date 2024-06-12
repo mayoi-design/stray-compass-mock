@@ -72,6 +72,11 @@ class MainActivityViewModel(
         }
     }
 
+    fun setCurrentLocation(latitude: Double, longitude: Double) {
+        currentLatitude = latitude
+        currentLongitude = longitude
+    }
+
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
 
     fun registerSensorListener() {
