@@ -42,7 +42,7 @@ import com.example.stray_compass.resource.locationIntentLongitude
 class MainActivity : ComponentActivity() {
     private lateinit var mainActivityViewModel: MainActivityViewModel
 
-    private lateinit var intentFilter: IntentFilter
+    private val intentFilter: IntentFilter = IntentFilter()
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(ctx: Context?, intent: Intent?) {
             val bundle = intent?.extras ?: return
@@ -64,30 +64,13 @@ class MainActivity : ComponentActivity() {
             LocationService::class.java
         )
         val ctx: Context = this
-        intentFilter = IntentFilter()
         setContent {
             MaterialTheme {
                 LaunchedEffect(Unit) {
                     if (ActivityCompat.checkSelfPermission(ctx, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                         && ActivityCompat.checkSelfPermission(ctx, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-                        intentFilter.addAction(locationIntentAction)
-                        @SuppressLint("UnspecifiedRegisterReceiverFlag")
-                        if (Build.VERSION.SDK_INT < 33) {
-                            registerReceiver(
-                                broadcastReceiver,
-                                intentFilter
-                            )
-                        }
-                        else {
-                            registerReceiver(
-                                broadcastReceiver,
-                                intentFilter,
-                                RECEIVER_NOT_EXPORTED
-                            )
-                        }
-
                         startService(locationServiceIntent)
+                        registerLocationBroadcastReceiver()
                     }
                 }
 
@@ -105,23 +88,7 @@ class MainActivity : ComponentActivity() {
                         -> {
                             permitted = true
                             startService(locationServiceIntent)
-
-                            intentFilter.addAction(locationIntentAction)
-
-                            @SuppressLint("UnspecifiedRegisterReceiverFlag")
-                            if (Build.VERSION.SDK_INT < 33) {
-                                registerReceiver(
-                                    broadcastReceiver,
-                                    intentFilter
-                                )
-                            }
-                            else {
-                                registerReceiver(
-                                    broadcastReceiver,
-                                    intentFilter,
-                                    RECEIVER_NOT_EXPORTED
-                                )
-                            }
+                            registerLocationBroadcastReceiver()
                         }
                     }
                 }
@@ -137,6 +104,25 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
+        }
+    }
+
+    private fun registerLocationBroadcastReceiver() {
+        intentFilter.addAction(locationIntentAction)
+
+        @SuppressLint("UnspecifiedRegisterReceiverFlag")
+        if (Build.VERSION.SDK_INT < 33) {
+            registerReceiver(
+                broadcastReceiver,
+                intentFilter
+            )
+        }
+        else {
+            registerReceiver(
+                broadcastReceiver,
+                intentFilter,
+                RECEIVER_NOT_EXPORTED
+            )
         }
     }
 
