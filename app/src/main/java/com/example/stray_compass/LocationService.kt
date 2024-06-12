@@ -8,6 +8,9 @@ import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import com.example.stray_compass.resource.locationIntentAction
+import com.example.stray_compass.resource.locationIntentLatitude
+import com.example.stray_compass.resource.locationIntentLongitude
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationRequest
@@ -26,9 +29,9 @@ class LocationService: Service() {
     private val locationListener = LocationListener { p0 ->
         val currentLatitude = p0.latitude
         val currentLongitude = p0.longitude
-
         Log.d("Location", "${currentLatitude}, $currentLongitude")
-        // Intentに乗せてMainActivityに通知する
+
+        broadcastLocation(currentLatitude, currentLongitude)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -54,6 +57,15 @@ class LocationService: Service() {
         }
 
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun broadcastLocation(latitude: Double, longitude: Double) {
+        val intent = Intent()
+        intent.putExtra(locationIntentLatitude, latitude)
+        intent.putExtra(locationIntentLongitude, longitude)
+        intent.setAction(locationIntentAction)
+
+        this.sendBroadcast(intent)
     }
 
     override fun onBind(p0: Intent?): IBinder? = null
