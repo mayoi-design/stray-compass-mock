@@ -17,8 +17,12 @@ class MainActivityViewModel(
         doubleToLocation(41.759167, 140.704444) // 函館山
     )
 ): ViewModel(), SensorEventListener {
+    var currentLocation = doubleToLocation(0.0, 0.0)
+        private set
     var currentLatitude by mutableDoubleStateOf(0.0)
     var currentLongitude by mutableDoubleStateOf(0.0)
+        private set
+
     var trippingState: TripState = initialTrippingState
         private set
 
@@ -80,6 +84,8 @@ class MainActivityViewModel(
     fun setCurrentLocation(latitude: Double, longitude: Double) {
         currentLatitude = latitude
         currentLongitude = longitude
+        currentLocation.latitude = latitude
+        currentLocation.longitude = longitude
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
