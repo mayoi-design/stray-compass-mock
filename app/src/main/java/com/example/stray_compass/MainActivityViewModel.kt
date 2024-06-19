@@ -20,6 +20,7 @@ class MainActivityViewModel(
     var currentLocation = doubleToLocation(0.0, 0.0)
         private set
     var currentLatitude by mutableDoubleStateOf(0.0)
+        private set
     var currentLongitude by mutableDoubleStateOf(0.0)
         private set
 
