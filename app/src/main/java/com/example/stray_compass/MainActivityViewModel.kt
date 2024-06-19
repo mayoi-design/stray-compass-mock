@@ -13,9 +13,14 @@ import androidx.lifecycle.ViewModel
 
 class MainActivityViewModel(
     private val sensorManager: SensorManager,
+    initialTrippingState: TripState = TripState.Tripping(
+        doubleToLocation(41.759167, 140.704444) // 函館山
+    )
 ): ViewModel(), SensorEventListener {
     var currentLatitude by mutableDoubleStateOf(0.0)
     var currentLongitude by mutableDoubleStateOf(0.0)
+    var trippingState: TripState = initialTrippingState
+        private set
 
     private var accelerometer: Sensor? = null
     private var magnetometer: Sensor? = null
