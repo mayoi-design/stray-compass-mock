@@ -4,13 +4,15 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.location.Location
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import kotlin.math.atan2
 
 class MainActivityViewModel(
     private val sensorManager: SensorManager,
@@ -28,7 +30,7 @@ class MainActivityViewModel(
     var trippingState: TripState = initialTrippingState
         private set
 
-    var distanceToDestination by mutableFloatStateOf(Float.POSITIVE_INFINITY)
+    var distanceToDestination by mutableDoubleStateOf(Double.POSITIVE_INFINITY)
         private set
 
     private var accelerometer: Sensor? = null
@@ -37,6 +39,9 @@ class MainActivityViewModel(
     private var geomagnetic: FloatArray? = null
 
     var azimuthInDegrees by mutableIntStateOf(0)
+        private set
+
+    var headdingTo: Double? by mutableStateOf(null)
         private set
 
     init {
@@ -81,6 +86,15 @@ class MainActivityViewModel(
                 if (azimuthInDegrees < 0) {
                     azimuthInDegrees += 360
                 }
+
+                val currentTrippingState = trippingState
+                if (currentTrippingState is TripState.Tripping) {
+                    headdingTo = getHeadingTo(
+                        currentLocation = currentLocation,
+                        destination = currentTrippingState.destination,
+                        phi = azimuthInDegrees.toDouble()
+                    )
+                }
                 Log.d("Azimuth", "方位角: $azimuthInDegrees 度")
             }
         }
@@ -96,8 +110,25 @@ class MainActivityViewModel(
         // (入れないとLintで怒られる)
         val currentTrippingState = trippingState
         if (currentTrippingState is TripState.Tripping) {
-            distanceToDestination = currentTrippingState.destination.distanceTo(currentLocation)
+            distanceToDestination = currentTrippingState.destination.distanceTo(currentLocation).toDouble()
         }
+    }
+
+    private fun getHeadingTo(currentLocation: Location, destination: Location, phi: Double): Double? {
+        // 現在地の取得がまだ終わっていないときはnullを返す。
+        if (currentLocation.latitude == 0.0) {
+            return null
+        }
+
+        val convertedLatitude = destination.latitude - currentLocation.latitude
+        val convertedLongitude = destination.longitude - currentLocation.longitude
+        Log.d("getHeaddingTo", "converted: ($convertedLatitude, $convertedLongitude)")
+        val thetaInRad = atan2(convertedLatitude, convertedLongitude)
+        Log.d("getHeddingTo", "phiInRad: $thetaInRad")
+        val theta = Math.toDegrees(thetaInRad).mod(360.0)
+        Log.d("getHeddingTo", "headTo: $theta")
+
+        return (theta - phi).mod(360.0)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
