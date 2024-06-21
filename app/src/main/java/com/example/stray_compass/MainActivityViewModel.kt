@@ -7,6 +7,7 @@ import android.hardware.SensorManager
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -25,6 +26,9 @@ class MainActivityViewModel(
         private set
 
     var trippingState: TripState = initialTrippingState
+        private set
+
+    var distanceToDestination by mutableFloatStateOf(Float.POSITIVE_INFINITY)
         private set
 
     private var accelerometer: Sensor? = null
@@ -87,6 +91,13 @@ class MainActivityViewModel(
         currentLongitude = longitude
         currentLocation.latitude = latitude
         currentLocation.longitude = longitude
+
+        // trippingStateの状態更新が重なる可能性があるのでここで一旦valに入れる。
+        // (入れないとLintで怒られる)
+        val currentTrippingState = trippingState
+        if (currentTrippingState is TripState.Tripping) {
+            distanceToDestination = currentTrippingState.destination.distanceTo(currentLocation)
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
