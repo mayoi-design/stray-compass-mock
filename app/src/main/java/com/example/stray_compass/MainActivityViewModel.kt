@@ -95,7 +95,7 @@ class MainActivityViewModel(
                         phi = azimuthInDegrees.toDouble()
                     )
                 }
-                Log.d("Azimuth", "方位角: $azimuthInDegrees 度")
+                // Log.d("Azimuth", "方位角: $azimuthInDegrees 度")
             }
         }
     }
