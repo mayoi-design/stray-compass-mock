@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.hardware.SensorManager
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -173,10 +174,18 @@ fun PermissionRequestView(
 fun Viewer(
     viewModel: MainActivityViewModel
 ) {
+    val currentState = viewModel.trippingState
     Viewer(
         azimuth = viewModel.azimuthInDegrees,
         latitude = viewModel.currentLatitude,
         longitude = viewModel.currentLongitude,
+        destination = if (currentState is TripState.Tripping) {
+            currentState.destination
+        } else {
+            doubleToLocation(0.0, 0.0)
+        },
+        distance = viewModel.distanceToDestination,
+        headTo = viewModel.headdingTo,
     )
 }
 
@@ -185,6 +194,9 @@ fun Viewer(
     azimuth: Int,
     latitude: Double,
     longitude: Double,
+    destination: Location,
+    distance: Double,
+    headTo: Double?,
 ) {
     Column(
         modifier = Modifier.padding(16.dp)
@@ -192,5 +204,8 @@ fun Viewer(
         Text("azimuth: $azimuth")
         Text("latitude: $latitude")
         Text("longitude: $longitude")
+        Text("Destination: ${destination.latitude}, ${destination.longitude}")
+        Text("Distance: $distance")
+        Text("headTo: $headTo")
     }
 }
