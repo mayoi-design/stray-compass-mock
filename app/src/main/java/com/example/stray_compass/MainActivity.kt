@@ -46,8 +46,8 @@ class MainActivity : ComponentActivity() {
 
     private val intentFilter: IntentFilter = IntentFilter()
     private val broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(ctx: Context?, intent: Intent?) {
-            val bundle = intent?.extras ?: return
+        override fun onReceive(ctx: Context, intent: Intent) {
+            val bundle = intent.extras ?: return
 
             val currentLatitude = bundle.getDouble(locationIntentLatitude, -1.0)
             val currentLongitude = bundle.getDouble(locationIntentLongitude, -1.0)
