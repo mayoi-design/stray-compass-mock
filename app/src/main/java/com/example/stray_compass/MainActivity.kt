@@ -123,7 +123,7 @@ class MainActivity : ComponentActivity() {
             registerReceiver(
                 broadcastReceiver,
                 intentFilter,
-                RECEIVER_NOT_EXPORTED
+                RECEIVER_EXPORTED
             )
         }
     }
