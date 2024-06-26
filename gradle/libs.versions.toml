@@ -8,6 +8,7 @@ espresso-core = "3.5.1"
 lifecycle-runtime-ktx = "2.8.1"
 activity-compose = "1.9.0"
 compose-bom = "2024.05.00"
+material-icon = "1.6.8"
 appcompat = "1.7.0"
 play-service-location = "21.3.0"
 
@@ -26,6 +27,7 @@ ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
+materialicon = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "material-icon" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 play-service-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "play-service-location" }
 
