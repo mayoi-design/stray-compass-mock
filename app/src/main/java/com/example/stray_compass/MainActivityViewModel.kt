@@ -54,7 +54,7 @@ class MainActivityViewModel(
             sensorManager.registerListener(
                 this,
                 accelerometer,
-                1e6.toInt(),
+                SensorManager.SENSOR_DELAY_NORMAL,
             )
         }
         magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)?.also {
@@ -62,7 +62,7 @@ class MainActivityViewModel(
             sensorManager.registerListener(
                 this,
                 magnetometer,
-                1e6.toInt()
+                SensorManager.SENSOR_DELAY_NORMAL
             )
         }
     }
