@@ -39,17 +39,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import com.example.stray_compass.resource.locationIntentAction
 import com.example.stray_compass.resource.locationIntentLatitude
 import com.example.stray_compass.resource.locationIntentLongitude
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     private lateinit var mainActivityViewModel: MainActivityViewModel
@@ -227,6 +226,14 @@ fun Viewer(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+            Text(
+                text = "REMAINING\n${distance.roundToInt() / 1000.0} [km]",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 32.sp,
+                lineHeight = 40.sp
+            )
+
             Icon(
                 imageVector = Icons.Filled.Navigation,
                 contentDescription = "Navigation",
