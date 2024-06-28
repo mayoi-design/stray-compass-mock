@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.stray_compass.resource.Destination
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.floor
@@ -167,5 +168,9 @@ class MainActivityViewModel(
     fun unregisterSensorListener() {
         sensorManager.unregisterListener(this, accelerometer)
         sensorManager.unregisterListener(this, magnetometer)
+    }
+
+    fun changeDestination(newDestination: Destination){
+        trippingState=TripState.Tripping(doubleToLocation(newDestination.lat, newDestination.lng))
     }
 }
