@@ -11,6 +11,7 @@ compose-bom = "2024.05.00"
 material-icon = "1.6.8"
 appcompat = "1.7.0"
 play-service-location = "21.3.0"
+datastore="1.1.1"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -30,6 +31,7 @@ material3 = { group = "androidx.compose.material3", name = "material3" }
 materialicon = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "material-icon" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 play-service-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "play-service-location" }
+datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
