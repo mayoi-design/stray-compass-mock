@@ -44,7 +44,7 @@ class MainActivityViewModel(
     // nが偶数のとき、メジアンは中央の二要素の平均になるが、
     // 今回のユースケースでは平均の計算がバグにつながることがわかった
     private var azimuthMemo: List<Double> = List(7) { 0.0 }
-    var azimuthInDegrees by mutableIntStateOf(0)
+    var azimuthInDegrees by mutableDoubleStateOf(0.0)
         private set
 
     var headdingTo: Double? by mutableStateOf(null)
@@ -95,7 +95,7 @@ class MainActivityViewModel(
                 azimuthMemo = azimuthMemo.drop(1) + listOf(azimuth.toDouble())
                 val median = azimuthMemo.sorted()[3]
 
-                azimuthInDegrees = Math.toDegrees(median).toInt()
+                azimuthInDegrees = Math.toDegrees(median)
                 if (azimuthInDegrees < 0) {
                     azimuthInDegrees += 360
                 }

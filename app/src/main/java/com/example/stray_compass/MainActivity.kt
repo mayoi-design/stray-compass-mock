@@ -211,7 +211,7 @@ fun Viewer(
 
 @Composable
 fun Viewer(
-    azimuth: Int,
+    azimuth: Double,
     latitude: Double,
     longitude: Double,
     destination: Location,
