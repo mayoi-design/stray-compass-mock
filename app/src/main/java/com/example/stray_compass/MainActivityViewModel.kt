@@ -8,7 +8,6 @@ import android.location.Location
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -105,7 +104,7 @@ class MainActivityViewModel(
                     headdingTo = getHeadingTo(
                         currentLocation = currentLocation,
                         destination = currentTrippingState.destination,
-                        phi = azimuthInDegrees.toDouble()
+                        phi = azimuthInDegrees
                     )
 
                     navigationIconOffset = DoublePoint(
