@@ -257,16 +257,20 @@ fun Viewer(
             Text("Destination: ${destination.latitude}, ${destination.longitude}")
             Text("Distance: $distance")
             Text("headTo: $headTo")
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(40.dp))
         }
         Button(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally),
+                .align(Alignment.CenterHorizontally)
+                .width(300.dp),
             onClick = {
                 changeBottomSheetState(true)
             }
         ){
-            Text("目的地を変更")
+            Text(
+                text = "目的地を変更",
+                fontSize = 20.sp
+            )
         }
 
         Spacer(Modifier.height(8.dp))
