@@ -47,7 +47,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -62,6 +65,7 @@ import com.example.stray_compass.resource.locationIntentLongitude
 import kotlinx.coroutines.launch
 import com.example.stray_compass.resource.mainActivityDebugTextPreference
 import kotlinx.coroutines.flow.map
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -240,6 +244,8 @@ fun Viewer(
     @OptIn(ExperimentalMaterial3Api::class)
     val sheetState = rememberModalBottomSheetState()
 
+    val minSquareWidth = min(LocalConfiguration.current.screenWidthDp, LocalConfiguration.current.screenHeightDp)
+
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
@@ -265,6 +271,18 @@ fun Viewer(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+            Spacer(
+                modifier = Modifier
+                    .size(height = minSquareWidth.dp, width = minSquareWidth.dp)
+                    .drawBehind {
+                        drawCircle(Color(0xFF0F0F0F))
+                        drawCircle(
+                            color = Color(0xFFFAFAFA),
+                            radius = size.minDimension / 2.05f,
+                        )
+                    }
+            )
+
             Text(
                 text = "REMAINING\n${distance.roundToInt() / 1000.0} [km]",
                 textAlign = TextAlign.Center,
@@ -276,6 +294,7 @@ fun Viewer(
             Icon(
                 imageVector = Icons.Filled.Navigation,
                 contentDescription = "Navigation",
+                tint = Color(0xFFE00A0A),
                 modifier = Modifier
                     .size(64.dp)
                     .graphicsLayer {
