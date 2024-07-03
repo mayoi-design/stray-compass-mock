@@ -200,7 +200,7 @@ fun PermissionRequestView(
 
 @Composable
 fun Viewer(
-    viewModel: MainActivityViewModel
+    viewModel: MainActivityViewModel,
 ) {
     val ctx = LocalContext.current
     val debugFeatureFlag = ctx.debugFeatureFlag.data.map { preference ->
@@ -326,12 +326,14 @@ fun Viewer(
                     Button(
                         onClick = {
                             onClickDestinationChoice(destination)
-                        scope.launch { sheetState.hide() }.invokeOnCompletion {
-                            if (!sheetState.isVisible) {
-                                changeBottomSheetState(false)
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    changeBottomSheetState(false)
+                                }
                             }
-                        }
-                    },
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
