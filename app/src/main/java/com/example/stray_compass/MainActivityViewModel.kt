@@ -8,12 +8,12 @@ import android.location.Location
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.floor
 import kotlin.math.sin
 
 class MainActivityViewModel(
@@ -44,7 +44,7 @@ class MainActivityViewModel(
     // nが偶数のとき、メジアンは中央の二要素の平均になるが、
     // 今回のユースケースでは平均の計算がバグにつながることがわかった
     private var azimuthMemo: List<Double> = List(7) { 0.0 }
-    var azimuthInDegrees by mutableIntStateOf(0)
+    var azimuthInDegrees by mutableDoubleStateOf(0.0)
         private set
 
     var headdingTo: Double? by mutableStateOf(null)
@@ -95,7 +95,7 @@ class MainActivityViewModel(
                 azimuthMemo = azimuthMemo.drop(1) + listOf(azimuth.toDouble())
                 val median = azimuthMemo.sorted()[3]
 
-                azimuthInDegrees = Math.toDegrees(median).toInt()
+                azimuthInDegrees = Math.toDegrees(median)
                 if (azimuthInDegrees < 0) {
                     azimuthInDegrees += 360
                 }
@@ -105,12 +105,20 @@ class MainActivityViewModel(
                     headdingTo = getHeadingTo(
                         currentLocation = currentLocation,
                         destination = currentTrippingState.destination,
-                        phi = azimuthInDegrees.toDouble()
+                        phi = azimuthInDegrees
                     )
 
                     navigationIconOffset = DoublePoint(
-                        x = 400 * sin(Math.toRadians(headdingTo ?: 0.0)),
-                        y = -400 * cos(Math.toRadians(headdingTo ?: 0.0)),
+                        x = 400 * sin(
+                            Math.toRadians(
+                                floor(headdingTo ?: 0.0)
+                            )
+                        ),
+                        y = -400 * cos(
+                            Math.toRadians(
+                                floor(headdingTo ?: 0.0)
+                            )
+                        ),
                     )
                 }
                 // Log.d("Azimuth", "方位角: $azimuthInDegrees 度")
