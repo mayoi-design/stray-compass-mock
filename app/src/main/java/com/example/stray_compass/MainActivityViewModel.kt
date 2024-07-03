@@ -40,6 +40,10 @@ class MainActivityViewModel(
     private var gravity: FloatArray? = null
     private var geomagnetic: FloatArray? = null
 
+    // メジアンフィルタは奇数で運用する。
+    // nが偶数のとき、メジアンは中央の二要素の平均になるが、
+    // 今回のユースケースでは平均の計算がバグにつながることがわかった
+    private var azimuthMemo: List<Double> = List(7) { 0.0 }
     var azimuthInDegrees by mutableIntStateOf(0)
         private set
 
@@ -87,7 +91,11 @@ class MainActivityViewModel(
                 val orientation = FloatArray(3)
                 SensorManager.getOrientation(R, orientation)
                 val azimuth = orientation[0]
-                azimuthInDegrees = Math.toDegrees(azimuth.toDouble()).toInt()
+
+                azimuthMemo = azimuthMemo.drop(1) + listOf(azimuth.toDouble())
+                val median = azimuthMemo.sorted()[3]
+
+                azimuthInDegrees = Math.toDegrees(median).toInt()
                 if (azimuthInDegrees < 0) {
                     azimuthInDegrees += 360
                 }
