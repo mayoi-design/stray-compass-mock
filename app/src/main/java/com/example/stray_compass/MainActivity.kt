@@ -22,21 +22,28 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,9 +54,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import com.example.stray_compass.resource.Destination
+import com.example.stray_compass.resource.destinationList
 import com.example.stray_compass.resource.locationIntentAction
 import com.example.stray_compass.resource.locationIntentLatitude
 import com.example.stray_compass.resource.locationIntentLongitude
+import kotlinx.coroutines.launch
 import com.example.stray_compass.resource.mainActivityDebugTextPreference
 import kotlinx.coroutines.flow.map
 import kotlin.math.roundToInt
@@ -205,6 +215,9 @@ fun Viewer(
         distance = viewModel.distanceToDestination,
         headTo = viewModel.headdingTo,
         navigationOffset = viewModel.navigationIconOffset,
+        showBottomSheet = viewModel.showBottomSheet,
+        onClickDestinationChoice = viewModel::changeDestination,
+        changeBottomSheetState = viewModel::changeShowBottomSheet,
         debugFeatureFlag = debugFeatureFlag.value,
     )
 }
@@ -218,8 +231,15 @@ fun Viewer(
     distance: Double,
     headTo: Double?,
     navigationOffset: DoublePoint,
+    showBottomSheet: Boolean,
+    onClickDestinationChoice: (Destination) -> Unit,
+    changeBottomSheetState: (Boolean) -> Unit,
     debugFeatureFlag: Boolean,
 ) {
+    val scope = rememberCoroutineScope()
+    @OptIn(ExperimentalMaterial3Api::class)
+    val sheetState = rememberModalBottomSheetState()
+
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
@@ -232,6 +252,13 @@ fun Viewer(
             Text("headTo: $headTo")
             Spacer(Modifier.height(8.dp))
         }
+        Button(onClick = {
+            changeBottomSheetState(true)
+        }){
+            Text("目的地を変更")
+        }
+
+        Spacer(Modifier.height(8.dp))
 
         Box(
             contentAlignment = Alignment.Center,
@@ -257,6 +284,39 @@ fun Viewer(
                         rotationZ = headTo?.toFloat() ?: 0f
                     }
             )
+        }
+
+    }
+
+    if (showBottomSheet) {
+        @OptIn(ExperimentalMaterial3Api::class)
+        ModalBottomSheet(
+            onDismissRequest = {
+               changeBottomSheetState(false)
+            },
+            sheetState = sheetState
+        ) {
+            Column(
+                modifier = Modifier.navigationBarsPadding()) {
+                destinationList.forEach { destination ->
+                    Button(
+                        onClick = {
+                            onClickDestinationChoice(destination)
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            if (!sheetState.isVisible) {
+                                changeBottomSheetState(false)
+                            }
+                        }
+                    },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            destination.name,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
         }
     }
 }
