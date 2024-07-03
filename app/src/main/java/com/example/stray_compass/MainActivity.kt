@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material3.Button
@@ -47,7 +48,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -62,6 +66,7 @@ import com.example.stray_compass.resource.locationIntentLongitude
 import kotlinx.coroutines.launch
 import com.example.stray_compass.resource.mainActivityDebugTextPreference
 import kotlinx.coroutines.flow.map
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -195,7 +200,7 @@ fun PermissionRequestView(
 
 @Composable
 fun Viewer(
-    viewModel: MainActivityViewModel
+    viewModel: MainActivityViewModel,
 ) {
     val ctx = LocalContext.current
     val debugFeatureFlag = ctx.debugFeatureFlag.data.map { preference ->
@@ -240,6 +245,8 @@ fun Viewer(
     @OptIn(ExperimentalMaterial3Api::class)
     val sheetState = rememberModalBottomSheetState()
 
+    val minSquareWidth = min(LocalConfiguration.current.screenWidthDp, LocalConfiguration.current.screenHeightDp)
+
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
@@ -250,12 +257,20 @@ fun Viewer(
             Text("Destination: ${destination.latitude}, ${destination.longitude}")
             Text("Distance: $distance")
             Text("headTo: $headTo")
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(40.dp))
         }
-        Button(onClick = {
-            changeBottomSheetState(true)
-        }){
-            Text("目的地を変更")
+        Button(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .width(300.dp),
+            onClick = {
+                changeBottomSheetState(true)
+            }
+        ){
+            Text(
+                text = "目的地を変更",
+                fontSize = 20.sp
+            )
         }
 
         Spacer(Modifier.height(8.dp))
@@ -265,6 +280,18 @@ fun Viewer(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+            Spacer(
+                modifier = Modifier
+                    .size(height = minSquareWidth.dp, width = minSquareWidth.dp)
+                    .drawBehind {
+                        drawCircle(Color(0xFF0F0F0F))
+                        drawCircle(
+                            color = Color(0xFFFAFAFA),
+                            radius = size.minDimension / 2.05f,
+                        )
+                    }
+            )
+
             Text(
                 text = "REMAINING\n${distance.roundToInt() / 1000.0} [km]",
                 textAlign = TextAlign.Center,
@@ -276,6 +303,7 @@ fun Viewer(
             Icon(
                 imageVector = Icons.Filled.Navigation,
                 contentDescription = "Navigation",
+                tint = Color(0xFFE00A0A),
                 modifier = Modifier
                     .size(64.dp)
                     .graphicsLayer {
@@ -302,13 +330,17 @@ fun Viewer(
                     Button(
                         onClick = {
                             onClickDestinationChoice(destination)
-                        scope.launch { sheetState.hide() }.invokeOnCompletion {
-                            if (!sheetState.isVisible) {
-                                changeBottomSheetState(false)
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    changeBottomSheetState(false)
+                                }
                             }
-                        }
-                    },
-                        modifier = Modifier.fillMaxWidth()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
                     ) {
                         Text(
                             destination.name,
