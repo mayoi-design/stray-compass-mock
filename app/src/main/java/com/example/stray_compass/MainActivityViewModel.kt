@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.floor
 import kotlin.math.sin
 
 class MainActivityViewModel(
@@ -108,8 +109,16 @@ class MainActivityViewModel(
                     )
 
                     navigationIconOffset = DoublePoint(
-                        x = 400 * sin(Math.toRadians(headdingTo?.toInt()?.toDouble() ?: 0.0)),
-                        y = -400 * cos(Math.toRadians(headdingTo?.toInt()?.toDouble() ?: 0.0)),
+                        x = 400 * sin(
+                            Math.toRadians(
+                                floor(headdingTo ?: 0.0)
+                            )
+                        ),
+                        y = -400 * cos(
+                            Math.toRadians(
+                                floor(headdingTo ?: 0.0)
+                            )
+                        ),
                     )
                 }
                 // Log.d("Azimuth", "方位角: $azimuthInDegrees 度")
