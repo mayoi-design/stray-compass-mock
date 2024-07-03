@@ -22,7 +22,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -41,6 +43,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +59,7 @@ import com.example.stray_compass.resource.destinationList
 import com.example.stray_compass.resource.locationIntentAction
 import com.example.stray_compass.resource.locationIntentLatitude
 import com.example.stray_compass.resource.locationIntentLongitude
+import kotlinx.coroutines.launch
 import com.example.stray_compass.resource.mainActivityDebugTextPreference
 import kotlinx.coroutines.flow.map
 import kotlin.math.roundToInt
@@ -211,6 +215,9 @@ fun Viewer(
         distance = viewModel.distanceToDestination,
         headTo = viewModel.headdingTo,
         navigationOffset = viewModel.navigationIconOffset,
+        showBottomSheet = viewModel.showBottomSheet,
+        onClickDestinationChoice = viewModel::changeDestination,
+        changeBottomSheetState = viewModel::changeShowBottomSheet,
         destinationList = destinationList,
         mainActivityViewModel = viewModel,
         debugFeatureFlag = debugFeatureFlag.value,
@@ -226,12 +233,12 @@ fun Viewer(
     distance: Double,
     headTo: Double?,
     navigationOffset: DoublePoint,
-    destinationList : List<Destination>,
-    mainActivityViewModel: MainActivityViewModel,
+    showBottomSheet: Boolean,
+    onClickDestinationChoice:(Destination) -> Unit,
+    changeBottomSheetState: (Boolean) -> Unit,
     debugFeatureFlag: Boolean,
 ) {
-    var showBottomSheet by remember { mutableStateOf(false) }
-
+    val scope = rememberCoroutineScope()
     @OptIn(ExperimentalMaterial3Api::class)
     val sheetState = rememberModalBottomSheetState()
 
@@ -249,10 +256,13 @@ fun Viewer(
             Spacer(Modifier.height(8.dp))
         }
         Button(onClick = {
-            showBottomSheet = true
-        }) {
+            changeBottomSheetState(true)
+        }){
             Text("目的地を変更")
         }
+
+        Spacer(Modifier.height(8.dp))
+
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
@@ -285,15 +295,28 @@ fun Viewer(
         @OptIn(ExperimentalMaterial3Api::class)
         ModalBottomSheet(
             onDismissRequest = {
-                showBottomSheet = false
-            }
+               changeBottomSheetState(false)
+            },
+            sheetState = sheetState
         ) {
-            Column() {
+            Column(
+                modifier = Modifier.navigationBarsPadding()) {
                 destinationList.forEach { destination ->
-                    TextButton(onClick = {
-                        mainActivityViewModel.changeDestination(destination)
-                    }) {
-                        Text(destination.name)
+                    TextButton(
+                        onClick = {
+                            onClickDestinationChoice(destination)
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            if (!sheetState.isVisible) {
+                                changeBottomSheetState(false)
+                            }
+                        }
+                    },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            destination.name,
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
             }

@@ -54,6 +54,9 @@ class MainActivityViewModel(
     var navigationIconOffset by mutableStateOf(DoublePoint(0.0, 0.0))
         private set
 
+    var showBottomSheet by mutableStateOf(false)
+        private set
+
     init {
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.also {
             sensorManager.registerListener(
@@ -171,6 +174,10 @@ class MainActivityViewModel(
     }
 
     fun changeDestination(newDestination: Destination){
-        trippingState=TripState.Tripping(doubleToLocation(newDestination.lat, newDestination.lng))
+        trippingState=TripState.Tripping(newDestination.location)
+    }
+
+    fun changeShowBottomSheet(state:Boolean){
+        showBottomSheet=state
     }
 }
