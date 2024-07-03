@@ -33,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,6 +50,8 @@ import androidx.core.app.ActivityCompat
 import com.example.stray_compass.resource.locationIntentAction
 import com.example.stray_compass.resource.locationIntentLatitude
 import com.example.stray_compass.resource.locationIntentLongitude
+import com.example.stray_compass.resource.mainActivityDebugTextPreference
+import kotlinx.coroutines.flow.map
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -183,6 +187,11 @@ fun PermissionRequestView(
 fun Viewer(
     viewModel: MainActivityViewModel
 ) {
+    val ctx = LocalContext.current
+    val debugFeatureFlag = ctx.debugFeatureFlag.data.map { preference ->
+        preference[mainActivityDebugTextPreference] ?: true
+    }.collectAsState(initial = false)
+
     val currentState = viewModel.trippingState
     Viewer(
         azimuth = viewModel.azimuthInDegrees,
@@ -196,6 +205,7 @@ fun Viewer(
         distance = viewModel.distanceToDestination,
         headTo = viewModel.headdingTo,
         navigationOffset = viewModel.navigationIconOffset,
+        debugFeatureFlag = debugFeatureFlag.value,
     )
 }
 
@@ -208,18 +218,20 @@ fun Viewer(
     distance: Double,
     headTo: Double?,
     navigationOffset: DoublePoint,
+    debugFeatureFlag: Boolean,
 ) {
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
-        Text("azimuth: $azimuth")
-        Text("latitude: $latitude")
-        Text("longitude: $longitude")
-        Text("Destination: ${destination.latitude}, ${destination.longitude}")
-        Text("Distance: $distance")
-        Text("headTo: $headTo")
-
-        Spacer(Modifier.height(8.dp))
+        if (debugFeatureFlag) {
+            Text("azimuth: $azimuth")
+            Text("latitude: $latitude")
+            Text("longitude: $longitude")
+            Text("Destination: ${destination.latitude}, ${destination.longitude}")
+            Text("Distance: $distance")
+            Text("headTo: $headTo")
+            Spacer(Modifier.height(8.dp))
+        }
 
         Box(
             contentAlignment = Alignment.Center,
