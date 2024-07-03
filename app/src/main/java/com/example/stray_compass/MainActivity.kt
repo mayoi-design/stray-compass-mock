@@ -334,7 +334,9 @@ fun Viewer(
                                 }
                             }
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
                     ) {
                         Text(
                             destination.name,
