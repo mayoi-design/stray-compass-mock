@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material3.Button
@@ -258,9 +259,13 @@ fun Viewer(
             Text("headTo: $headTo")
             Spacer(Modifier.height(8.dp))
         }
-        Button(onClick = {
-            changeBottomSheetState(true)
-        }){
+        Button(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally),
+            onClick = {
+                changeBottomSheetState(true)
+            }
+        ){
             Text("目的地を変更")
         }
 
