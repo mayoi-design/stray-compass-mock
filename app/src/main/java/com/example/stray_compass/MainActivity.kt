@@ -218,8 +218,6 @@ fun Viewer(
         showBottomSheet = viewModel.showBottomSheet,
         onClickDestinationChoice = viewModel::changeDestination,
         changeBottomSheetState = viewModel::changeShowBottomSheet,
-        destinationList = destinationList,
-        mainActivityViewModel = viewModel,
         debugFeatureFlag = debugFeatureFlag.value,
     )
 }
@@ -234,14 +232,13 @@ fun Viewer(
     headTo: Double?,
     navigationOffset: DoublePoint,
     showBottomSheet: Boolean,
-    onClickDestinationChoice:(Destination) -> Unit,
+    onClickDestinationChoice: (Destination) -> Unit,
     changeBottomSheetState: (Boolean) -> Unit,
     debugFeatureFlag: Boolean,
 ) {
     val scope = rememberCoroutineScope()
     @OptIn(ExperimentalMaterial3Api::class)
     val sheetState = rememberModalBottomSheetState()
-
 
     Column(
         modifier = Modifier.padding(16.dp)
@@ -302,7 +299,7 @@ fun Viewer(
             Column(
                 modifier = Modifier.navigationBarsPadding()) {
                 destinationList.forEach { destination ->
-                    TextButton(
+                    Button(
                         onClick = {
                             onClickDestinationChoice(destination)
                         scope.launch { sheetState.hide() }.invokeOnCompletion {
@@ -321,6 +318,5 @@ fun Viewer(
                 }
             }
         }
-
     }
 }
