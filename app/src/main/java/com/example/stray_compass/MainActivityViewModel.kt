@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.stray_compass.resource.Destination
+import com.example.stray_compass.resource.destinationList
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.floor
@@ -20,7 +21,7 @@ import kotlin.math.sin
 class MainActivityViewModel(
     private val sensorManager: SensorManager,
     initialTrippingState: TripState = TripState.Tripping(
-        doubleToLocation(41.759167, 140.704444) // 函館山
+        destinationList[0].location // 函館山
     )
 ): ViewModel(), SensorEventListener {
     var currentLocation = doubleToLocation(0.0, 0.0)

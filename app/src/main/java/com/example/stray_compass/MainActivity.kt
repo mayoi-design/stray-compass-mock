@@ -252,9 +252,10 @@ fun Viewer(
     ) {
         if (debugFeatureFlag) {
             Text("azimuth: $azimuth")
-            Text("latitude: $latitude")
-            Text("longitude: $longitude")
-            Text("Destination: ${destination.latitude}, ${destination.longitude}")
+            Text("Current Longitude: $longitude")
+            Text("Current Latitude: $latitude")
+            Text("Dest Longitude: ${destination.longitude}")
+            Text("Dest Latitude: ${destination.latitude}")
             Text("Distance: $distance")
             Text("headTo: $headTo")
             Spacer(Modifier.height(40.dp))

@@ -29,9 +29,9 @@ class LocationService: Service() {
     private val locationListener = LocationListener { p0 ->
         val currentLatitude = p0.latitude
         val currentLongitude = p0.longitude
-        Log.d("Location", "${currentLatitude}, $currentLongitude")
+        Log.d("Location", "$currentLongitude, $currentLatitude")
 
-        broadcastLocation(currentLatitude, currentLongitude)
+        broadcastLocation(currentLongitude, currentLatitude)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
